@@ -36,8 +36,8 @@ class PerformanceController extends Controller {
     return result;
   }
   async disposeDriver(context) {
-    const { brower } = context;
-    await brower.close();
+    const { browser } = context;
+    await browser.close();
   }
   async createPuppeteer() {
     const launchOptions = {
@@ -46,21 +46,25 @@ class PerformanceController extends Controller {
         width: 1440,
         height: 960,
       },
-      args: ["--no-sandbox", "--disabled-dev-shm-usage"],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disabled-dev-shm-usage",
+      ],
     };
-    const brower = await puppeteer.launch(launchOptions);
-    const page = (await brower.pages())[0];
+    const browser = await puppeteer.launch(launchOptions);
+    const page = await browser.newPage();
     return {
-      brower,
+      browser,
       page,
     };
   }
   async getLighthouseResult(context) {
-    const { brower, runOptions } = context;
+    const { browser, runOptions } = context;
     const { lhr, artifacts, report } = await lighthouse(
       runOptions.url,
       {
-        port: new URL(brower.wsEndpoint()).port,
+        port: new URL(browser.wsEndpoint()).port,
         output: "html",
         logLevel: "info",
       },

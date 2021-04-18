@@ -1,7 +1,7 @@
 FROM buildkite/puppeteer
 
 WORKDIR /usr/src/app
-ENV PUPPETEER_DOWNLOAD_HOST https://npm.taobao.org/mirrors
+ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/google-chrome-stable"
 
 COPY package.json .
 RUN npm install
